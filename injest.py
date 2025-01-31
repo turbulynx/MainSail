@@ -2,12 +2,20 @@ import os
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_ollama import OllamaEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import chromadb
-import time
+from dotenv import load_dotenv
+import google.generativeai as genai
+from langchain.prompts import PromptTemplate
+
+load_dotenv()
+google_api_key = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=google_api_key)
+
 
 def load_pdf(file_path):
     loader = PyPDFLoader(file_path)
+    print(file_path)
     return loader.load()
 
 def load_text(file_path):
@@ -18,6 +26,7 @@ def load_documents_from_directory(directory):
     documents = []
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
+        print(f"loading... {file_path}")
         if filename.endswith(".pdf"):
             documents.extend(load_pdf(file_path))
         elif filename.endswith(".txt"):
@@ -34,15 +43,7 @@ def create_and_save_vectorstore(documents, embeddings):
 
 data_dir = "./data"
 all_documents = load_documents_from_directory(data_dir)
-
-ollama_base_url = "http://localhost:11434"
-embeddings = OllamaEmbeddings(base_url=ollama_base_url, model="nomic-embed-text")
-
-test_text = "This is a test document for embedding speed measurement."
-start_time = time.time()
-embedding = embeddings.embed_query(test_text)
-end_time = time.time()
-
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 db = create_and_save_vectorstore(all_documents, embeddings)
 
 query = "What is document about?"
@@ -50,3 +51,12 @@ similar_docs = db.similarity_search(query)
 for doc in similar_docs:
     print(doc.page_content)
     print("-" * 20)
+
+llm = genai.GenerativeModel('gemini-pro')
+template = "Question: {question}"
+prompt = PromptTemplate(template=template, input_variables=["question"])
+
+llm_chain = prompt | llm
+llm_response = llm_chain.run(query)
+print("\nGemini LLM Response:")
+print(llm_response)
