@@ -81,13 +81,13 @@ class QueryClassifier:
 
     def __init__(self, llm: ChatGoogleGenerativeAI):
         template = """Analyze if the following question:
-1. Needs information from a knowledge base to answer accurately
-2. Refers to or requires chat history context
-
-Question: {question}
-
-Respond with a JSON object using this exact format:
-{{"knowledge": boolean, "history": boolean}}"""
+                    1. Needs information from a knowledge base to answer accurately
+                    2. Refers to or requires chat history context
+                    
+                    Question: {question}
+                    
+                    Respond with a JSON object using this exact format:
+                    {{"knowledge": boolean, "history": boolean}}"""
 
         self.chain = (
                 ChatPromptTemplate.from_template(template)
@@ -205,7 +205,7 @@ Based on this, please answer: {question}"""
 
 def main():
     """Main function to run the chatbot"""
-    init()  # Initialize colorama
+    init()
     load_dotenv()
 
     config = ChatConfig(api_key=os.getenv("GOOGLE_API_KEY"))

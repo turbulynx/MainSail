@@ -2,16 +2,17 @@ import os
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 import chromadb
 from dotenv import load_dotenv
 import google.generativeai as genai
 from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 
 load_dotenv()
 google_api_key = os.getenv("GOOGLE_API_KEY")
+model_name: str = "gemini-pro"
 genai.configure(api_key=google_api_key)
-
 
 def load_pdf(file_path):
     loader = PyPDFLoader(file_path)
@@ -43,20 +44,13 @@ def create_and_save_vectorstore(documents, embeddings):
 
 data_dir = "./data"
 all_documents = load_documents_from_directory(data_dir)
-embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-db = create_and_save_vectorstore(all_documents, embeddings)
 
-query = "What is document about?"
-similar_docs = db.similarity_search(query)
-for doc in similar_docs:
-    print(doc.page_content)
-    print("-" * 20)
+if all_documents:
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    db = create_and_save_vectorstore(all_documents, embeddings)
 
-llm = genai.GenerativeModel('gemini-pro')
-template = "Question: {question}"
-prompt = PromptTemplate(template=template, input_variables=["question"])
-
-llm_chain = prompt | llm
-llm_response = llm_chain.run(query)
-print("\nGemini LLM Response:")
-print(llm_response)
+    query = "What is document about?"
+    similar_docs = db.similarity_search(query)
+    for doc in similar_docs:
+        print(doc.page_content)
+        print("-" * 20)
