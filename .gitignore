@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+*.env
+
+# Conda environment files
+*.conda
+*.lock
+
+# PyCharm project settings
+.idea/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# mypy
+.mypy_cache/
+
+# VSCode settings (if applicable)
+.vscode/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+*.manifest
+
+# Logs and debug files
+*.log
+logs/
+
+# Langchain-related cache (if applicable)
+.cache/
