@@ -6,8 +6,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 import chromadb
 from dotenv import load_dotenv
 import google.generativeai as genai
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 
 load_dotenv()
 google_api_key = os.getenv("GOOGLE_API_KEY")
@@ -39,7 +37,7 @@ def create_and_save_vectorstore(documents, embeddings):
     docs = text_splitter.split_documents(documents)
     print(f"Total documents to index: {len(docs)}")
     client = chromadb.HttpClient(host="localhost", port=8000)
-    db = Chroma.from_documents(docs, embeddings,  client=client, collection_name="tcp")
+    db = Chroma.from_documents(docs, embeddings,  client=client, collection_name="hare")
     return db
 
 data_dir = "./data"

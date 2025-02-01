@@ -19,7 +19,7 @@ class ChatConfig:
     api_key: str
     chroma_host: str = "localhost"
     chroma_port: int = 8000
-    collection_name: str = "tcp"
+    collection_name: str = "hare"
     model_name: str = "gemini-pro"
     embedding_model: str = "models/embedding-001"
 
