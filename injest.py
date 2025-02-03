@@ -33,7 +33,7 @@ def load_documents_from_directory(directory):
     return documents
 
 def create_and_save_vectorstore(documents, embeddings):
-    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=25)
     docs = text_splitter.split_documents(documents)
     print(f"Total documents to index: {len(docs)}")
     client = chromadb.HttpClient(host="localhost", port=8000)
@@ -47,7 +47,7 @@ if all_documents:
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     db = create_and_save_vectorstore(all_documents, embeddings)
 
-    query = "What is document about?"
+    query = "what is the document about?"
     similar_docs = db.similarity_search(query)
     for doc in similar_docs:
         print(doc.page_content)

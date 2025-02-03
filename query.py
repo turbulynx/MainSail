@@ -22,6 +22,7 @@ class ChatConfig:
     collection_name: str = "walletmanager"
     model_name: str = "gemini-pro"
     embedding_model: str = "models/embedding-001"
+    api_url: str = "http://localhost:5000"  # API base URL
 
 
 class MessageHandler:
@@ -83,11 +84,11 @@ class QueryClassifier:
         template = """Analyze if the following question:
                     1. Needs information from a knowledge base to answer accurately
                     2. Refers to or requires chat history context
-                    
+                    3. The query involves action on an API call
                     Question: {question}
                     
                     Respond with a JSON object using this exact format:
-                    {{"knowledge": boolean, "history": boolean}}"""
+                    {{"knowledge": boolean, "history": boolean, "api": boolean}}"""
 
         self.chain = (
                 ChatPromptTemplate.from_template(template)
@@ -98,10 +99,11 @@ class QueryClassifier:
     def classify(self, query: str) -> Dict[str, bool]:
         try:
             result = self.chain.invoke({"question": query})
-            return self._parse_classification(result)
+            print(f"Query type: {self._parse_classification(result)}")
+            return {"knowledge": True, "history": True, "api": False}
         except Exception as e:
             print(f"Classification error: {e}")
-            return {"knowledge": False, "history": False}
+            return {"knowledge": True, "history": True, "api": False}
 
     def _parse_classification(self, classification_str: str) -> Dict[str, bool]:
         try:
@@ -180,9 +182,7 @@ Based on this, please answer: {question}"""
         try:
             classification = self.classifier.classify(query)
             print(f"\nQuery classification: {classification}")
-
             history = self._get_message_history("history")
-
             if classification["knowledge"]:
                 retrieval_chain = self._create_retrieval_chain(history)
                 response = retrieval_chain.invoke(query)
@@ -206,7 +206,6 @@ def main():
     """Main function to run the chatbot"""
     init()
     load_dotenv()
-
     config = ChatConfig(api_key=os.getenv("GOOGLE_API_KEY"))
     chatbot = ChatBot(config)
 
@@ -215,7 +214,6 @@ def main():
         if query.lower() == "exit":
             print("Exiting...")
             break
-
         try:
             response = chatbot.process_query(query)
             print(f"{Fore.RED}\nResponse:\n{response}{Fore.RESET}")
