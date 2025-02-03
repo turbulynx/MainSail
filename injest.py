@@ -37,7 +37,7 @@ def create_and_save_vectorstore(documents, embeddings):
     docs = text_splitter.split_documents(documents)
     print(f"Total documents to index: {len(docs)}")
     client = chromadb.HttpClient(host="localhost", port=8000)
-    db = Chroma.from_documents(docs, embeddings,  client=client, collection_name="hare")
+    db = Chroma.from_documents(docs, embeddings,  client=client, collection_name="walletmanager")
     return db
 
 data_dir = "./data"

@@ -19,7 +19,7 @@ class ChatConfig:
     api_key: str
     chroma_host: str = "localhost"
     chroma_port: int = 8000
-    collection_name: str = "hare"
+    collection_name: str = "walletmanager"
     model_name: str = "gemini-pro"
     embedding_model: str = "models/embedding-001"
 
@@ -163,7 +163,6 @@ Chat History:
 {history}
 
 Based on this, please answer: {question}"""
-
         doc_prompt = ChatPromptTemplate.from_template(doc_template)
 
         return (
