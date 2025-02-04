@@ -10,3 +10,8 @@ docker run -p 8000:8000 \
 ```
 
 conda create --name mainsail python=3.12 
+
+
+        pdf_path="./data/Documentation.pdf"
+
+            google_api_key=os.getenv("GOOGLE_API_KEY")
