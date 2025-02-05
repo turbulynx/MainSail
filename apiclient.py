@@ -3,6 +3,8 @@ import json
 
 from langchain_core.tools import Tool
 
+from api import set_hold
+
 
 class APIClient:
     """
@@ -85,19 +87,31 @@ class APIClient:
         response = requests.post(url, json=data)
         return self._handle_response(response)
 
-    def set_hold(self, customer_name, status):
+    def exit_hold(self, customer_name):
+        """
+        Exits the hold status for a customer.
+
+        Args:
+            customer_name (str): The name of the customer.
+
+        Returns:
+             dict: The JSON response from the API, containing success or error information.
+        """
+        return self.set_hold(customer_name, False)
+
+    def set_hold(self, customer_name, value=True):
         """
         Sets the hold status for a customer.
 
         Args:
             customer_name (str): The name of the customer.
-            status (bool): The hold status to set (True or False).
+            value (bool): The hold status value to set (True or False).
 
         Returns:
              dict: The JSON response from the API, containing success or error information.
         """
         url = f"{self.base_url}/customers/{customer_name}/hold"
-        data = {"hold": status}
+        data = {"hold": value}
         response = requests.post(url, json=data)
         return self._handle_response(response)
 
@@ -212,7 +226,12 @@ class APIClient:
             Tool(
                 name="Set Hold",
                 func=self.set_hold,
-                description="Set hold status for a customer with customer_name and status"
+                description="Set a customer on hold based on customer_name"
+            ),
+            Tool(
+                name="Exit Hold",
+                func=self.set_hold,
+                description="Exit hold status for a customer based on customer_name"
             ),
             Tool(
                 name="Direct Debit",
