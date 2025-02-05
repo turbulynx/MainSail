@@ -22,7 +22,6 @@ class APIClient:
             base_url (str, optional): The base URL of the API. Defaults to "http://localhost:5000".
         """
         self.base_url = base_url
-
     def create_customer(self, name):
         """
         Creates a new customer.
@@ -37,6 +36,7 @@ class APIClient:
         data = {"name": name}
         response = requests.post(url, json=data)
         return self._handle_response(response)
+
 
     def get_customers(self):
         """
