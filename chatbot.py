@@ -79,36 +79,7 @@ class ContextAwareAgent:
                 func=self._search_context,
                 description="Search the PDF context to understand if API calls are needed"
             ),
-            Tool(
-                name="List Customers",
-                func=self.client.get_customers,
-                description="Get a list of all customers"
-            ),
-            Tool(
-                name="Create Customer",
-                func=self.client.create_customer,
-                description="Create a new customer with the given name"
-            ),
-            Tool(
-                name="Add Transaction",
-                func=self._add_transaction_wrapper,
-                description="Add a transaction for a customer with event name, amount, and direction"
-            ),
-            Tool(
-                name="Get Balance",
-                func=self.client.get_balance,
-                description="Get the balance for a specific customer"
-            ),
-            Tool(
-                name="Set Hold",
-                func=self._set_hold_wrapper,
-                description="Set hold status for a customer"
-            ),
-            Tool(
-                name="Direct Debit",
-                func=self.client.direct_debit,
-                description="Trigger direct debit for a customer"
-            )
+            *self.client.get_tools()
         ]
 
         # Initialize memory
@@ -122,22 +93,6 @@ class ContextAwareAgent:
             verbose=True,
             memory=memory
         )
-
-    def _add_transaction_wrapper(self, customer_name: str, event_name: str,
-                                 amount: float, direction: str, description: str = "") -> Dict[str, Any]:
-        """Wrapper for add_transaction to handle type conversion"""
-        return self.client.add_transaction(
-            customer_name=customer_name,
-            event_name=event_name,
-            amount=float(amount),
-            direction=direction,
-            description=description
-        )
-
-    def _set_hold_wrapper(self, customer_name: str, hold_status: str) -> Dict[str, Any]:
-        """Wrapper for set_hold to handle boolean conversion"""
-        hold_status_bool = hold_status.lower() == "true"
-        return self.client.set_hold(customer_name, hold_status_bool)
 
     def run(self, query: str) -> str:
         """
