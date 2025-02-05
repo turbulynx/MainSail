@@ -85,19 +85,19 @@ class APIClient:
         response = requests.post(url, json=data)
         return self._handle_response(response)
 
-    def set_hold(self, customer_name, hold_status):
+    def set_hold(self, customer_name, status):
         """
         Sets the hold status for a customer.
 
         Args:
             customer_name (str): The name of the customer.
-            hold_status (bool): The hold status to set (True or False).
+            status (bool): The hold status to set (True or False).
 
         Returns:
              dict: The JSON response from the API, containing success or error information.
         """
         url = f"{self.base_url}/customers/{customer_name}/hold"
-        data = {"hold": hold_status}
+        data = {"hold": status}
         response = requests.post(url, json=data)
         return self._handle_response(response)
 
@@ -212,7 +212,7 @@ class APIClient:
             Tool(
                 name="Set Hold",
                 func=self.set_hold,
-                description="Set hold status for a customer"
+                description="Set hold status for a customer with customer_name and status"
             ),
             Tool(
                 name="Direct Debit",
